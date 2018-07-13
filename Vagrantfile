@@ -16,6 +16,11 @@ hosts = {
       :ip => "192.168.77.12",
       :role => "worker",
       :os => "ubuntu"
+    },
+    "kubecluster-04" => {
+      :ip => "192.168.77.13",
+      :role => "worker",
+      :os => "ubuntu"
     }
 }
 
@@ -46,9 +51,9 @@ Vagrant.configure("2") do |config|
                 ansible.playbook = "play.yml"
             end
             if attrs[:role] == "master"
-                machine.vm.provision "shell", inline: "kubeadm init --apiserver-advertise-address #{attrs[:ip]} --pod-network-cidr 10.1.0.0/16"
-                machine.vm.provision "shell", inline: "kubectl apply -f https://raw.githubusercontent.com/cloudnativelabs/kube-router/master/daemonset/kubeadm-kuberouter.yaml"
-                machine.vm.provision "shell", inline: "kubectl apply -f \"https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')\""
+                puts "This is a master node"
+            elsif attrs[:role] == "worker"
+                puts "This is a worker node"
             end
         end
     end
