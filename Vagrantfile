@@ -10,19 +10,34 @@ hosts = {
     "kubecluster-02" => {
       :ip => "192.168.77.11",
       :role => "worker",
-      :os => "ubuntu"
+      :os => "ubuntu",
+      :master_ip => "192.168.77.10"
     },
     "kubecluster-03" => {
       :ip => "192.168.77.12",
       :role => "worker",
-      :os => "ubuntu"
+      :os => "ubuntu",
+      :master_ip => "192.168.77.10"
     },
     "kubecluster-04" => {
       :ip => "192.168.77.13",
       :role => "worker",
-      :os => "ubuntu"
+      :os => "ubuntu",
+      :master_ip => "192.168.77.10"
     }
 }
+
+$master_init = <<SCRIPT
+sudo kubeadm init --apiserver-advertise-address $1 --pod-network-cidr 10.12.0.0/16 --service-cidr 10.24.0.0/16 --token 8xrb4r.g7vfbkoxn21p8kru --token-ttl 0
+sleep 5
+mkdir ~/.kube && sudo cp -i /etc/kubernetes/admin.conf ~/.kube/config && sudo chown $(id -u):$(id -g) ~/.kube/config
+sleep 2
+sudo kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/v0.10.0/Documentation/kube-flannel.yml
+SCRIPT
+
+$node_init = <<SCRIPT
+sudo kubeadm join $1:6443 --token 8xrb4r.g7vfbkoxn21p8kru --discovery-token-unsafe-skip-ca-verification
+SCRIPT
 
 boxes = {
     "ubuntu" => "ubuntu/xenial64",
@@ -51,9 +66,9 @@ Vagrant.configure("2") do |config|
                 ansible.playbook = "play.yml"
             end
             if attrs[:role] == "master"
-                puts "This is a master node"
+                machine.vm.provision "shell", inline: $master_init, args: "#{attrs[:ip]}"
             elsif attrs[:role] == "worker"
-                puts "This is a worker node"
+                machine.vm.provision "shell", inline: $node_init, args: "#{attrs[:master_ip]}"
             end
         end
     end
