@@ -1,0 +1,5 @@
+---
+
+#- include_tasks: "common/preconfig.yml"
+- include_tasks: "{{ ansible_distribution | lower }}/install.yml"
+- include_tasks: "common/services.yml"

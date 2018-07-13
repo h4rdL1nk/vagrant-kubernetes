@@ -1,0 +1,7 @@
+---
+
+- name: Configure kubernetes nodes
+  become: true
+  hosts: all
+  roles:
+    - ansible-kubernetes

@@ -1,0 +1,6 @@
+[kube-nodes]
+n1 ansible_host=192.168.77.10
+n2 ansible_host=192.168.77.11
+
+[kube-nodes-master]
+n1
