@@ -1,6 +1,8 @@
 
 ### Start nodes
+```
  $ vagrant up
+```
 
 ### On master node
  # kubeadm init --apiserver-advertise-address 192.168.77.10 --pod-network-cidr 192.168.100.0/16
