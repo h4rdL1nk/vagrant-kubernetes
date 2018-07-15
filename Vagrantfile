@@ -66,9 +66,9 @@ Vagrant.configure("2") do |config|
                 ansible.playbook = "play.yml"
             end
             if attrs[:role] == "master"
-                machine.vm.provision "shell", inline: $master_init, args: "#{attrs[:ip]}"
+                machine.vm.provision "shell", privileged: false, inline: $master_init, args: "#{attrs[:ip]}"
             elsif attrs[:role] == "worker"
-                machine.vm.provision "shell", inline: $node_init, args: "#{attrs[:master_ip]}"
+                machine.vm.provision "shell", privileged: false, inline: $node_init, args: "#{attrs[:master_ip]}"
             end
         end
     end
